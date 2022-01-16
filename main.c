@@ -23,8 +23,7 @@ char *usage =
   "               - n_points must be > 1\n"
   "            endif\n";
 
-int
-main (int argc, char **argv)
+int main (int argc, char **argv)
 {
   int opt;
   char *inp = NULL;

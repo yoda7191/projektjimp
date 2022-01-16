@@ -3,8 +3,7 @@
 
 #include <stdio.h>
 
-void
-make_spl (points_t * pts, spline_t * spl)
+void make_spl (points_t * pts, spline_t * spl)
 {
 
 	int n= pts->n - 1;
@@ -14,7 +13,8 @@ make_spl (points_t * pts, spline_t * spl)
 
 	int i;
 
-	for( i= 0; i < n; i++ ) {
+	for( i= 0; i < n; i++ ) 
+	{
 		double dx= x[i+1] - x[i];
 		int if1= 3*i;
 		int if2= if1+1;
@@ -40,7 +40,8 @@ make_spl (points_t * pts, spline_t * spl)
 	write_matrix( eqs, stdout );
 #endif
 
-	if( piv_ge_solver( eqs ) ) {
+	if( piv_ge_solver( eqs ) ) 
+	{
 		spl->n = 0;
 		return;
 	}
@@ -49,9 +50,11 @@ make_spl (points_t * pts, spline_t * spl)
 	write_matrix( eqs, stdout );
 #endif
 
-  if ( alloc_spl (spl, pts->n) == 0 ) {
+  if ( alloc_spl (spl, pts->n) == 0 ) 
+  {
     spl->n = pts->n;
-		for( i= 0; i < n; i++ ) {
+		for( i= 0; i < n; i++ ) 
+		{
 			spl->x[i]= pts->x[i];
 			spl->f[i]= pts->y[i];
 			spl->f1[i]= get_entry_matrix( eqs, 3*i,   3*n );
