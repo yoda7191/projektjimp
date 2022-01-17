@@ -7,7 +7,7 @@
 #include <stdlib.h>
 
 char *usage =
-  "Usage: %s -s spline-file [-p points-file] [ -g gnuplot-file [-f from_x -t to_x -n n_points ] ]\n"
+  "Usage: %s -s spline-file [-poly][-p points-file] [ -g gnuplot-file [-f from_x -t to_x -n n_points ] ]\n"
   "            if points-file is given then\n"
   "               reads discrete 2D points from points-file\n"
   "               writes spline approximation to spline-file\n"
@@ -29,6 +29,7 @@ int main (int argc, char **argv)
   char *inp = NULL;
   char *out = NULL;
   char *gpt = NULL;
+  char *approxtype = NULL; // jesli podczas wywolania podamy -poly uzyjemy aproksymacji wielomianowej 4 stopnia
   double fromX = 0;
   double toX = 0;
   int n = 100;
@@ -41,8 +42,11 @@ int main (int argc, char **argv)
   spl.n = 0;
 
   /* process options, save user choices */
-  while ((opt = getopt (argc, argv, "p:s:g:f:t:n:")) != -1) {
+  while ((opt = getopt (argc, argv, "p:s:g:f:t:n:poly:")) != -1) {
     switch (opt) {
+    case 'poly':
+      approxtype = optarg;
+      break;
     case 'p':
       inp = optarg;
       break;
@@ -66,7 +70,8 @@ int main (int argc, char **argv)
       exit (EXIT_FAILURE);
     }
   }
-	if( optind < argc ) {
+	if( optind < argc ) 
+  {
 		fprintf( stderr, "\nBad parameters!\n" );
 		for( ; optind < argc; optind++ )
 			fprintf( stderr, "\t\"%s\"\n", argv[optind] );
@@ -76,22 +81,26 @@ int main (int argc, char **argv)
 	}
 
   /* if points-file was given, then read points, generate spline, save it to file */
-  if (inp != NULL) {
+  if (inp != NULL)
+  {
     FILE *ouf = NULL; /* we shall open it later, when we shall get points */
 
     FILE *inf = fopen (inp, "r");
-    if (inf == NULL) {
+    if (inf == NULL) 
+    {
       fprintf (stderr, "%s: can not read points file: %s\n\n", argv[0], inp);
       exit (EXIT_FAILURE);
     }
 
-    if (read_pts_failed (inf, &pts)) {
-      fprintf (stderr, "%s: bad contents of points file: %s\n\n", argv[0],
-               inp);
+    if (read_pts_failed (inf, &pts)) //jezeli nie uda nam sie odczytac punktow to wywalamy erro
+    {
+      fprintf (stderr, "%s: bad contents of points file: %s\n\n", argv[0], inp);
       exit (EXIT_FAILURE);
     }
-    else
+    else //jezeli sie uda to zamykamy plik
       fclose (inf);
+
+    // w tym miejscu mamy stworzona tablice liniowa z liczba n (do rozpracowania) i wartosciami x i y
 
     ouf = fopen (out, "w");
     if (ouf == NULL) {
@@ -99,10 +108,18 @@ int main (int argc, char **argv)
       exit (EXIT_FAILURE);
     }
 
-    make_spl (&pts, &spl);
+    if(approxtype == NULL)
+    {
+      make_spl (&pts, &spl);
+      if( spl.n > 0 )
+        write_spl (&spl, ouf);
+    }
+    else
+      //wielomian baza 4 rob
 
-    if( spl.n > 0 )
-			write_spl (&spl, ouf);
+    // narazie wyrzucam, zobaczymy czy moze tak byc
+    // if( spl.n > 0 )
+		// 	write_spl (&spl, ouf);
 
     fclose (ouf);
   } else if (out != NULL) {  /* if point-file was NOT given, try to read splines from a file */
