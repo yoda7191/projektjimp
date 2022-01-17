@@ -15,6 +15,11 @@ typedef struct {
 //        double *f4;
 } poly_t;
 
+int alloc_poly (poly_t * poly, int n);
+int read_poly ( FILE * inf, poly_t * poly);
+void write_poly (poly_t * poly, FILE * ouf);
+double value_poly (poly_t * poly, double x);
+
 #endif
 
 // #ifndef SPLINES_H
