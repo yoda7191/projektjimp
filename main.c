@@ -115,6 +115,9 @@ int main (int argc, char **argv)
         write_spl (&spl, ouf);
     }
     else
+    {
+      make_poly (&pts, &spl);
+    }
       //wielomian baza 4 rob
 
     // narazie wyrzucam, zobaczymy czy moze tak byc
@@ -167,11 +170,18 @@ int main (int argc, char **argv)
                gpt);
       exit (EXIT_FAILURE);
     }
-
-    for (i = 0; i < n; i++)
-      fprintf (gpf, "%g %g\n", fromX + i * dx,
-               value_spl (&spl, fromX + i * dx));
-
+    // jesli podamy -poly przy wlaczaniu to printujemy gowno chuj kurwa
+    if (approxtype == NULL)
+    {
+      for (i = 0; i < n; i++)
+        fprintf (gpf, "%g %g\n", fromX + i * dx,
+                 value_spl (&spl, fromX + i * dx));
+    }
+    else
+    {
+      for (i = 0; i < n; i++)
+        fprintf (gpf, "%g %g\n", fromX + i * dx, value_poly (&spl, fromX + i * dx));
+    }
     fclose (gpf);
   }
 

@@ -5,14 +5,25 @@
 
 int wielomianBaza4();
 
+// typedef struct {
+// 		int n;
+// 		double *x;
+// 		double *f;
+// 		double *f1;
+// 		double *f2;
+// 		double *f3;
+//         double *f4;
+// } poly_t;
+
 typedef struct {
-		int n;
-		double *x;
-		double *f;
-		double *f1;
-		double *f2;
-		double *f3;
-//        double *f4;
+    int n;
+    double *x;
+    double *y;
+	double *f;
+	double *f1;
+	double *f2;
+	double *f3;
+    double *f4;
 } poly_t;
 
 int alloc_poly (poly_t * poly, int n);

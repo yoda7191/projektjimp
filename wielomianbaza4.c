@@ -4,9 +4,7 @@
 #include <stdlib.h>
 
 #define MALLOC_FAILED( P, SIZE ) (((P)=malloc( (SIZE)*sizeof( *(P))))==NULL)
-
-int wielomianBaza4 ()
-{
+    
     /*
     Macierz A współczynników przy a0, a1, …, a4:
     | 2*i	         2*Ex           2*E(x^2)    2*E(x^3)     2*E(x^4) |
@@ -16,18 +14,16 @@ int wielomianBaza4 ()
     | 2*E(x^4)    2*E(x^5)    2*E(x^6)    2*E(x^7)     2*E(x^8) |
     make_matrix(i, i); - odwolujemy sie do matrix.c, ktore tworzy macierz
     */   
-}
 
 int alloc_poly (poly_t * poly, int n)
 {
-    poly->n = n;
     poly->n = n;
     return MALLOC_FAILED (poly->x, poly->n)
         || MALLOC_FAILED (poly->f, poly->n)
         || MALLOC_FAILED (poly->f1, poly->n)
         || MALLOC_FAILED (poly->f2, poly->n)
-        || MALLOC_FAILED (poly->f3, poly->n);
-//        || MALLOC_FAILED (poly->f4, poly->n);
+        || MALLOC_FAILED (poly->f3, poly->n)
+        || MALLOC_FAILED (poly->f4, poly->n);
 }
 
 int read_poly ( FILE * inf, poly_t * poly)
@@ -63,7 +59,8 @@ double value_poly (poly_t * poly, double x)
     
     dx = x - poly->x[i];
 
-    return poly->f[i] + dx * poly->f1[i] + dx * dx / 2 *  poly->f2[i] + dx * dx * dx / 6 * poly->f3[i];
+    //return poly->f[i] + dx * poly->f1[i] + dx * dx / 2 *  poly->f2[i] + dx * dx * dx / 6 * poly->f3[i];
+    return 0;
 }
 
 
