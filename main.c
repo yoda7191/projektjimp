@@ -1,14 +1,17 @@
 #include "points.h"
 #include "splines.h"
 #include "makespl.h"
+#include "wielomianbaza4.h"
 
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 char *usage =
-  "Usage: %s -s spline-file [-poly][-p points-file] [ -g gnuplot-file [-f from_x -t to_x -n n_points ] ]\n"
-  "            if points-file is given then\n"
+  "Usage: %s -s spline-file [-p points-file] [-w] [ -g gnuplot-file [-f from_x -t to_x -n n_points ] ]\n"
+  "            if -P is given\n"
+  "		  does least-squares function approximation with quartic plane curve base\n"
+  "	       if points-file is given then\n"
   "               reads discrete 2D points from points-file\n"
   "               writes spline approximation to spline-file\n"
   "               - number of points should be >= 4\n"
@@ -37,14 +40,16 @@ int main (int argc, char **argv)
 
   points_t pts;
   spline_t spl;
+  poly_t poly;
 
   pts.n = 0;
   spl.n = 0;
+  poly.n = 0;
 
   /* process options, save user choices */
-  while ((opt = getopt (argc, argv, "p:s:g:f:t:n:poly:")) != -1) {
+  while ((opt = getopt (argc, argv, "p:s:b:g:f:t:n:")) != -1) {
     switch (opt) {
-    case 'poly':
+    case 'b':	  
       approxtype = optarg;
       break;
     case 'p':
@@ -116,7 +121,9 @@ int main (int argc, char **argv)
     }
     else
     {
-      make_poly (&pts, &spl);
+      make_poly (&poly, &pts);
+      if( poly.n > 0 )
+	      write_poly(&poly, ouf);
     }
       //wielomian baza 4 rob
 
@@ -180,7 +187,7 @@ int main (int argc, char **argv)
     else
     {
       for (i = 0; i < n; i++)
-        fprintf (gpf, "%g %g\n", fromX + i * dx, value_poly (&spl, fromX + i * dx));
+        fprintf (gpf, "%g %g\n", fromX + i * dx, value_poly (&poly, fromX + i * dx));
     }
     fclose (gpf);
   }
