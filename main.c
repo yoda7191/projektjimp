@@ -1,7 +1,7 @@
 #include "points.h"
 #include "splines.h"
 #include "makespl.h"
-#include "wielomianbaza4.h"
+
 
 #include <getopt.h>
 #include <stdio.h>
@@ -9,8 +9,6 @@
 
 char *usage =
   "Usage: %s -s spline-file [-p points-file] [-w] [ -g gnuplot-file [-f from_x -t to_x -n n_points ] ]\n"
-  "            if -P is given\n"
-  "		  does least-squares function approximation with quartic plane curve base\n"
   "	       if points-file is given then\n"
   "               reads discrete 2D points from points-file\n"
   "               writes spline approximation to spline-file\n"
@@ -32,26 +30,20 @@ int main (int argc, char **argv)
   char *inp = NULL;
   char *out = NULL;
   char *gpt = NULL;
-  char *approxtype = NULL; // jesli podczas wywolania podamy -poly uzyjemy aproksymacji wielomianowej 4 stopnia
   double fromX = 0;
   double toX = 0;
   int n = 100;
-	char *progname= argv[0];
+  char *progname= argv[0];
 
   points_t pts;
   spline_t spl;
-  poly_t poly;
-
+  
   pts.n = 0;
   spl.n = 0;
-  poly.n = 0;
-
+  
   /* process options, save user choices */
-  while ((opt = getopt (argc, argv, "p:s:b:g:f:t:n:")) != -1) {
+  while ((opt = getopt (argc, argv, "p:s:g:f:t:n:")) != -1) {
     switch (opt) {
-    case 'b':	  
-      approxtype = optarg;
-      break;
     case 'p':
       inp = optarg;
       break;
@@ -113,24 +105,10 @@ int main (int argc, char **argv)
       exit (EXIT_FAILURE);
     }
 
-    if(approxtype == NULL)
-    {
-      make_spl (&pts, &spl);
-      if( spl.n > 0 )
-        write_spl (&spl, ouf);
-    }
-    else
-    {
-      make_poly (&poly, &pts);
-      if( poly.n > 0 )
-	      write_poly(&poly, ouf);
-    }
-      //wielomian baza 4 rob
-
-    // narazie wyrzucam, zobaczymy czy moze tak byc
-    // if( spl.n > 0 )
-		// 	write_spl (&spl, ouf);
-
+    make_spl (&pts, &spl);
+    if( spl.n > 0 )
+      write_spl (&spl, ouf);
+    
     fclose (ouf);
   } else if (out != NULL) {  /* if point-file was NOT given, try to read splines from a file */
     FILE *splf = fopen (out, "r");
@@ -177,17 +155,10 @@ int main (int argc, char **argv)
                gpt);
       exit (EXIT_FAILURE);
     }
-    // jesli podamy -poly przy wlaczaniu to printujemy gowno chuj kurwa
-    if (approxtype == NULL)
-    {
-      for (i = 0; i < n; i++)
-        fprintf (gpf, "%g %g\n", fromX + i * dx,
-                 value_spl (&spl, fromX + i * dx));
-    }
     else
     {
       for (i = 0; i < n; i++)
-        fprintf (gpf, "%g %g\n", fromX + i * dx, value_poly (&poly, fromX + i * dx));
+        fprintf (gpf, "%g %g\n", fromX + i * dx, value_spl (&spl, fromX + i * dx));
     }
     fclose (gpf);
   }
