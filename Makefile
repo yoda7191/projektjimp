@@ -1,5 +1,5 @@
-poly: main.o splines.o points.o wielomianbaza4.o aproksymator_na_bazie.o gaus/libge.a
-	$(CC) -o poly  main.o splines.o points.o wielomianbaza4.o aproksymator_na_bazie.o -L gaus -l ge
+poly: main_poly.o points.o wielomianbaza4.o gaus/libge.a
+	$(CC) -o poly main_poly.o points.o wielomianbaza4.o -L gaus -l ge
 
 aprox: main.o splines.o points.o aproksymator_na_bazie.o gaus/libge.a
 	$(CC) -o aprox  main.o splines.o points.o aproksymator_na_bazie.o -L gaus -l ge

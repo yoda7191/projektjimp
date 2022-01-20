@@ -108,19 +108,33 @@ Macierz wyrazów wolnych (macierz B prawych stron):
 void make_poly(poly_t * poly, points_t * pts)
 	
 {
+	printf("Zaczynam make_poly\n");
+
 	matrix_t *eqs = NULL;		// to będzie macierz wspolczynnikow 
 	//poly_t *poly = NULL;		// czy poly w main?
 	double *x = pts->x;		// tablica x-ow
 	double *y = pts->y;		// tablica y-ow
 	int n = pts->n;
 	int i, j, k;
+	
+	printf("x = ");
+	for( i = 0; i < n; i++ ) 
+		printf("%f\n",x[i]);
+	printf("\ny = \n");
+	for( i = 0; i < n; i++)
+		printf("%f\n", y[i]);
+
+	printf("n = %d\n", n);
 
 	eqs = make_matrix(5, 6);	// 5x5 - wymimiar macierzy wspolczynnikow
 	int nb = 5;			// 5x1 - wymiar macierzy prawych stron
 	
+	printf("Obliczam elemety macierzy z x i y\n");
+
 	add_to_entry_matrix(eqs, 0, 0, 2*n);
-	for( i = 0; i < nb; j++ ) {	// wyliczamy wsółczynniki
+	for( i = 0; i < n; i++ ) {	// wyliczamy wsółczynniki
 		// spróbować zrobić to sprytniej
+		printf("Jestem w pętli, element %d\n", i);
 		add_to_entry_matrix(eqs, 0, 1, 2*x[i]);
 		add_to_entry_matrix(eqs, 0, 2, 2*x[i]*x[i]);
 		add_to_entry_matrix(eqs, 0, 3, 2*x[i]*x[i]*x[i]);
@@ -153,33 +167,36 @@ void make_poly(poly_t * poly, points_t * pts)
 		add_to_entry_matrix(eqs, 4, 5, 2*y[i]*x[i]*x[i]*x[i]*x[i]);
 	}
 	
-	
- #ifdef DEBUG
-	write_matrix(eqs, stdout);
- #endif
+	printf("Obliczone (oby)\n");
+// #ifdef DEBUG
+	//write_matrix(eqs, stdout);
+// #endif
+	printf("Wyliczamy macierz (piv_ge_solver)\n");
 
 	if(piv_ge_solver(eqs)) {
 		poly->n = 0;
 		return;
 	}
 
- #ifdef DEBUG
-	write_matrix(eqs, stdout);
- #endif
-
+// #ifdef DEBUG
+	//write_matrix(eqs, stdout);
+// #endif
+	printf("Obliczamy współczynniki wielomianu (oby):\n");
 	double a[5]; // niewiadomwe 
-	if(alloc_poly(poly, nb) == 0) {
+	if(alloc_poly(poly, n) == 0) {
+		printf("pętla z a[k]\n");
 		for( k = 0; k < nb; k++) {
 			a[k] = get_entry_matrix(eqs, k, nb);
 		}
 		for( i=0; i < poly->n; i++) {
+			printf("Obliczamy wartości funkcji dla x i zapisujemy w poly\n");
 			double xx = poly->x[i] = x[i];
 
 			poly->f[i] = fx(a[0], a[1], a[2], a[3], a[4], xx);
 		}
 	}
 
- #ifdef DEBUG 
+// #ifdef DEBUG 
 	printf("%f %f %f %f %f\n", a[0], a[1], a[2], a[3], a[4]);
- #endif
+// #endif
 }
