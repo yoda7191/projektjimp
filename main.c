@@ -163,5 +163,13 @@ int main (int argc, char **argv)
     fclose (gpf);
   }
 
+  free(pts.x);
+  free(pts.y);
+  free(spl.x);
+  free(spl.f);
+  free(spl.f1);
+  free(spl.f2);
+  free(spl.f3);
+  
   return 0;
 }

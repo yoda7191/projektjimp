@@ -56,37 +56,33 @@ void make_spl(points_t * pts, spline_t * spl)
 	double *x = pts->x;		// tablica x-ow
 	double *y = pts->y;		// tablica y-ow
 	int n = pts->n;
-	int i, j, k;
-	int p;
+	int i, row, col;
+	double power;
+
 	eqs = make_matrix(5, 6);	// 5x5 - wymimiar macierzy wspolczynnikow
 	int nb = 5;			// 5x1 - wymiar macierzy prawych stron
 
-	for ( i = 0; i < 6; i++) //wypelnianie macierzy
+	for ( i = 0; i < n; i++) //wypelnianie macierzy
 	{
-		for(j = 0; j < 5; j++)
-			for( k = 0; k < n; k++)
-				add_to_entry_matrix(eqs, i, j, pow(x[k], i+j));
-		for(k = 0; k <n; k++)
-			add_to_entry_matrix(eqs, i, 5, y[k]*pow(x[k], i));
+		for(row = 0; row < nb; row++) {
+			for( col = 0; col < nb; col++) {
+				power = (double)(row+col);
+				add_to_entry_matrix(eqs, row, col, 2*pow(x[i], power));
+			}
+			power = (double)row;
+			add_to_entry_matrix(eqs, row, nb, 2*y[i]*pow(x[i], power));
+		}
 	}
-
- #ifdef DEBUG
-	write_matrix(eqs, stdout);
- #endif
 
 	if(piv_ge_solver(eqs)) {
 		spl->n = 0;
 		return;
 	}
 
- #ifdef DEBUG
-	write_matrix(eqs, stdout);
- #endif
-
-	double a[5]; 	// wspolczynniki poszukiwanego wielomianu 4 stopnia 
+	double *a = malloc(nb * sizeof(*a)); 	// wspolczynniki poszukiwanego wielomianu 4 stopnia 
 	if(alloc_spl(spl, n) == 0) {
-		for( k = 0; k < nb; k++) 
-			a[k] = get_entry_matrix(eqs, k, nb);
+		for( row = 0; row < nb; row++) 
+			a[row] = get_entry_matrix(eqs, row, nb);
 		for( i=0; i < spl->n; i++) {
 			double xx = spl->x[i] = x[i];
 
@@ -94,10 +90,8 @@ void make_spl(points_t * pts, spline_t * spl)
 			spl->f1[i] = d1f(a, xx);
 		        spl->f2[i] = d2f(a, xx);
 			spl->f3[i] = d3f(a, xx);	
-		}
+		}	
 	}
-
- #ifdef DEBUG 
-	printf("%f %f %f %f %f\n", a[0], a[1], a[2], a[3], a[4]);
- #endif
+	free(eqs);
+	free(a);
 }
