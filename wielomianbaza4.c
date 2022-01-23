@@ -92,6 +92,6 @@ void make_spl(points_t * pts, spline_t * spl)
 			spl->f3[i] = d3f(a, xx);	
 		}	
 	}
-	free(eqs);
+	free_matrix(eqs);
 	free(a);
 }

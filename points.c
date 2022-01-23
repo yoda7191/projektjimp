@@ -1,6 +1,8 @@
 #include "points.h"
 #include <stdlib.h>
 
+#define MAX_DATA 10000
+
 static int realloc_pts_failed (points_t * pts, int size)
 {
   pts->x = realloc(pts->x, size * sizeof * pts->x);
@@ -16,16 +18,16 @@ int read_pts_failed (FILE * inf, points_t * pts)
 
   if (pts->n == 0) 
   {
-    pts->x = malloc (100 * sizeof *pts->x);
+    pts->x = malloc (MAX_DATA * sizeof *pts->x);
     if (pts->x == NULL)
       return 1;
-    pts->y = malloc (100 * sizeof *pts->y);
+    pts->y = malloc (MAX_DATA * sizeof *pts->y);
     if (pts->y == NULL) 
     {
       free (pts->x);
       return 1;
     }
-    size = 100;
+    size = MAX_DATA;
   }
   else
     size = pts->n;
@@ -50,3 +52,10 @@ int read_pts_failed (FILE * inf, points_t * pts)
 
   return 0;
 }
+
+void free_pts( points_t *pts )
+{
+	free( pts->x );
+	free( pts->y );
+}
+

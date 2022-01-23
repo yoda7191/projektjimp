@@ -13,6 +13,8 @@ matrix_t * make_matrix( int rn, int cn );
 
 matrix_t * read_matrix( FILE *in );
 
+void free_matrix (matrix_t * m);
+
 void write_matrix( matrix_t *, FILE *out );
 
 void put_entry_matrix( matrix_t *, int i, int j, double val );

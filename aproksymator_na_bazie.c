@@ -137,7 +137,7 @@ void make_spl(points_t * pts, spline_t * spl)
 	double         *y = pts->y;
 	double		a = x[0];
 	double		b = x[pts->n - 1];
-	int		i, j, k;
+	int		i, j, row, col;
 	int		nb = pts->n - 3 > 10 ? 10 : pts->n - 3;
   char *nbEnv= getenv( "APPROX_BASE_SIZE" );
 
@@ -151,8 +151,9 @@ void make_spl(points_t * pts, spline_t * spl)
 	{
 		FILE           *tst = fopen("debug_base_plot.txt", "w");
 		double		dx = (b - a) / (TESTBASE - 1);
-		for( j= 0; j < nb; j++ )
+		for( j = 0; j < nb; j++ )
 			xfi( a, b, nb, j, tst );
+
 		for (i = 0; i < TESTBASE; i++) {
 			fprintf(tst, "%g", a + i * dx);
 			for (j = 0; j < nb; j++) {
@@ -167,13 +168,13 @@ void make_spl(points_t * pts, spline_t * spl)
 	}
 #endif
 
-	for (j = 0; j < nb; j++) {
-		for (i = 0; i < nb; i++)
-			for (k = 0; k < pts->n; k++)
-				add_to_entry_matrix(eqs, j, i, fi(a, b, nb, i, x[k]) * fi(a, b, nb, j, x[k]));
+	for (row = 0; row < nb; row++) {
+		for (col = 0; col < nb; col++)
+			for (i = 0; i < pts->n; i++)
+				add_to_entry_matrix(eqs, row, col, fi(a, b, nb, col, x[i]) * fi(a, b, nb, row, x[i]));
 
-		for (k = 0; k < pts->n; k++)
-			add_to_entry_matrix(eqs, j, nb, y[k] * fi(a, b, nb, j, x[k]));
+		for (i = 0; i < pts->n; i++)
+			add_to_entry_matrix(eqs, row, nb, y[i] * fi(a, b, nb, row, x[i]));
 	}
 
 #ifdef DEBUG
@@ -196,12 +197,12 @@ void make_spl(points_t * pts, spline_t * spl)
 			spl->f1[i] = 0;
 			spl->f2[i] = 0;
 			spl->f3[i] = 0;
-			for (k = 0; k < nb; k++) {
-				double		ck = get_entry_matrix(eqs, k, nb);
-				spl->f[i]  += ck * fi  (a, b, nb, k, xx);
-				spl->f1[i] += ck * dfi (a, b, nb, k, xx);
-				spl->f2[i] += ck * d2fi(a, b, nb, k, xx);
-				spl->f3[i] += ck * d3fi(a, b, nb, k, xx);
+			for (row = 0; row < nb; row++) {
+				double		cr = get_entry_matrix(eqs, row, nb);
+				spl->f[i]  += cr * fi  (a, b, nb, row, xx);
+				spl->f1[i] += cr * dfi (a, b, nb, row, xx);
+				spl->f2[i] += cr * d2fi(a, b, nb, row, xx);
+				spl->f3[i] += cr * d3fi(a, b, nb, row, xx);
 			}
 		}
 	}
@@ -216,16 +217,16 @@ void make_spl(points_t * pts, spline_t * spl)
 			double d2yi= 0;
 			double d3yi= 0;
 			double xi= a + i * dx;
-			for( k= 0; k < nb; k++ ) {
-							yi += get_entry_matrix(eqs, k, nb) * fi(a, b, nb, k, xi);
-							dyi += get_entry_matrix(eqs, k, nb) * dfi(a, b, nb, k, xi);
-							d2yi += get_entry_matrix(eqs, k, nb) * d2fi(a, b, nb, k, xi);
-							d3yi += get_entry_matrix(eqs, k, nb) * d3fi(a, b, nb, k, xi);
+			for( row = 0; row < nb; row++ ) {
+							yi += get_entry_matrix(eqs, row, nb) * fi(a, b, nb, row, xi);
+							dyi += get_entry_matrix(eqs, row, nb) * dfi(a, b, nb, row, xi);
+							d2yi += get_entry_matrix(eqs, row, nb) * d2fi(a, b, nb, row, xi);
+							d3yi += get_entry_matrix(eqs, row, nb) * d3fi(a, b, nb, row, xi);
 			}
 			fprintf(tst, "%g %g %g %g %g\n", xi, yi, dyi, d2yi, d3yi );
 		}
 		fclose(tst);
 	}
 #endif
-	free(eqs);
+	free_matrix(eqs);
 }

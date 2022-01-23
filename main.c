@@ -8,10 +8,10 @@
 #include <stdlib.h>
 
 char *usage =
-  "Usage: %s -s spline-file [-p points-file] [-w] [ -g gnuplot-file [-f from_x -t to_x -n n_points ] ]\n"
+  "Usage: %s -s spline-file [-p points-file] [ -g gnuplot-file [-f from_x -t to_x -n n_points ] ]\n"
   "	       if points-file is given then\n"
   "               reads discrete 2D points from points-file\n"
-  "               writes spline approximation to spline-file\n"
+  "               writes spline/poly approximation to spline-file\n"
   "               - number of points should be >= 4\n"
   "            else (points-file not given)\n"
   "               reads spline from spline-file\n"
@@ -163,13 +163,8 @@ int main (int argc, char **argv)
     fclose (gpf);
   }
 
-  free(pts.x);
-  free(pts.y);
-  free(spl.x);
-  free(spl.f);
-  free(spl.f1);
-  free(spl.f2);
-  free(spl.f3);
+  free_pts(&pts);
+  free_spl(&spl);
   
   return 0;
 }
