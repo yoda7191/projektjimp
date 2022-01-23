@@ -1,8 +1,0 @@
-points.c - przechowywanie punktow
-splines - przechowywanie aproksymacji
-
-./aprox -s spl -p test/dane.1 -g myplot -f 5.1 -t 5.7 -n 300
-
--s - nazwa plik z aproksymacja
--p - plik z danymi
--g 

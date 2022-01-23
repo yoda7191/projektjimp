@@ -53,26 +53,21 @@ Macierz wyrazów wolnych (macierz B prawych stron):
 void make_spl(points_t * pts, spline_t * spl)	
 {
 	matrix_t *eqs = NULL;		// to będzie macierz wspolczynnikow 
-	
 	double *x = pts->x;		// tablica x-ow
 	double *y = pts->y;		// tablica y-ow
 	int n = pts->n;
 	int i, j, k;
-	double p;
-
+	int p;
 	eqs = make_matrix(5, 6);	// 5x5 - wymimiar macierzy wspolczynnikow
 	int nb = 5;			// 5x1 - wymiar macierzy prawych stron
-	
-	for( i = 0; i < n; i++ ) {	// wypelniamy macierz
-		// sprytniejsze rozwiązanie
-		for( j=0; j < 5; j++ ) {
-		       for( k=0; k < 5; k++ ) {
-			        p = (double)(j+k); 
-		       		add_to_entry_matrix(eqs, j, k, 2*pow(x[i], p));	
-		       }
-		       p = (double)j;
-		       add_to_entry_matrix(eqs, j, 5, 2*y[i]*pow(x[i], p));
-		}
+
+	for ( i = 0; i < 6; i++) //wypelnianie macierzy
+	{
+		for(j = 0; j < 5; j++)
+			for( k = 0; k < n; k++)
+				add_to_entry_matrix(eqs, i, j, pow(x[k], i+j));
+		for(k = 0; k <n; k++)
+			add_to_entry_matrix(eqs, i, 5, y[k]*pow(x[k], i));
 	}
 
  #ifdef DEBUG
