@@ -6,7 +6,12 @@
 double fun( double x ) 
 {
 	double r= ((double)rand() - RAND_MAX/2.0)/RAND_MAX/5; // +-10%
-	return (1+r)*(10*x*x*x*x+5*x*x*x+x*x);
+	// return (1+r)*(10*x*x*x*x+5*x*x*x+x*x); //standardowo
+	// return r + sin(x); // sinus
+	// return r + cos(x); // cos
+	// return r + tan(x); // tg
+	// return r + pow(2, x); // wykladnicza
+	return (r+1) * (6*x*x*x + 7*x*x + 8);
 }
 
 int main( int argc, char **argv ) 

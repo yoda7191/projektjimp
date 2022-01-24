@@ -8,7 +8,7 @@ matrix_t *make_matrix (int rn, int cn)
   matrix_t *new_mat = malloc (sizeof *new_mat);
   if (new_mat == NULL)
     return NULL;
-  if ((new_mat->e = malloc ((size_t) rn * (size_t) cn * sizeof *new_mat->e)) == NULL) 
+  if ((new_mat->e = malloc((size_t) rn * (size_t) cn * sizeof *new_mat->e)) == NULL) 
   {
     free (new_mat);
     return NULL;
